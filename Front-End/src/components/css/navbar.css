@@ -1,0 +1,80 @@
+/* Purpose:
+   - Adds hover transitions and animations to navbar links and buttons
+   - Improves overall navbar interactivity and user experience
+*/
+
+
+/* And dropdown should also be above carousel */
+.nav-item-dropdown .dropdown-menu {
+  z-index: 1000 !important;
+}
+
+.nav-wrapper {
+  position: relative;
+  padding: 2px 10px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  z-index: 999;
+}
+
+.brand-link {
+  font-weight: bold;
+  font-size: 40px;
+  color: #28a745;
+  text-decoration: none;
+  transition: transform 0.3s ease;
+}
+
+.brand-link:hover {
+  transform: scale(1.05);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+}
+
+.nav-item {
+  margin: 0 12px;
+  font-size: 20px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+.nav-item:hover {
+  color: #28a745;
+  transform: translateY(-2px);
+}
+
+.nav-item-dropdown .dropdown-link {
+  font-size: 18px;
+  padding: 5px 20px;
+  color: #333;
+  display: block;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.dropdown-link:hover {
+  color: #28a745;
+  background-color: #d7caca;
+  transform: translateX(5px);
+}
+
+.post-btn {
+  background-color: #28a745;
+  color: white;
+  padding: 8px 15px;
+  font-size: 20px;
+  margin-left: 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.post-btn:hover {
+  background-color: #218838;
+  transform: scale(1.05);
+}

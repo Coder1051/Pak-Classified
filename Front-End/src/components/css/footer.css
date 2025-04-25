@@ -1,0 +1,95 @@
+* {
+  box-sizing: border-box;
+  padding: 0;
+}
+
+/* Layout */
+.foot {
+  justify-content: space-evenly;
+}
+
+/* Link styling and hover effect */
+.L {
+  color: #c6c6c6;
+  background-color: #2B3A41;
+  transition: all 0.3s ease;
+}
+
+.L:hover {
+  color: #fdafaf;
+  transform: translateX(5px);
+}
+
+/* Footer base */
+.foota {
+  background-color: #2B3A41;
+}
+
+/* Social icons hover animation */
+.signs, .signYt {
+  cursor: pointer;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.signs:hover {
+  color: rgb(75, 75, 255);
+  transform: scale(1.2);
+}
+
+.signYt:hover {
+  color: #ef1111d1;
+  transform: scale(1.2);
+}
+
+/* Navigation link hover */
+.animated-link {
+  transition: all 0.3s ease;
+}
+
+.animated-link:hover {
+  color: #692626;
+  transform: translateX(5px);
+}
+
+/* Button hover */
+.animated-button {
+  transition: all 0.5s ease;
+  cursor: pointer;
+}
+
+.animated-button:hover {
+  background-color: #23933b !important;
+  transform: scale(1.1);
+}
+
+/* --- Animation Purpose --- */
+/* fade-up: base style to hide + prepare for animation */
+/* fade-in: activates when footer is visible in viewport */
+/* delay-N: adds staggered timing for smoother appearance */
+
+.fade-up {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.fade-in {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+.fade-up.delay-1 { transition-delay: 0.2s; }
+.fade-up.delay-2 { transition-delay: 0.4s; }
+.fade-up.delay-3 { transition-delay: 0.6s; }
+.fade-up.delay-4 { transition-delay: 0.8s; }
+
+/* Divider bar */
+.footer-divider {
+  position: relative;
+  height: 2px;
+  margin: 0.5rem 0;
+  background-color: hsl(196, 34.50%, 10.80%);
+  filter: blur(2px);
+  border-radius: 3px;
+  width: 100%;
+}
