@@ -26,16 +26,16 @@ const PostAdRouter = Router();
 // 👇 PUBLIC ROUTE — anyone can view all posts 
 PostAdRouter.route("/")
     .get(PostAdController.getAll);
-
-// 👇 PROTECTED ROUTES — only logged-in users
-// PostAdRouter.use(Authentication);
-
 PostAdRouter.route("/")
     .post(PostAdController.Create);
+
+
 
 PostAdRouter.route("/:id")
     .get(PostAdController.getById)
     .put(PostAdController.Update)
     .delete(PostAdController.Delete);
+// 👇 PROTECTED ROUTES — only logged-in users
+PostAdRouter.use(Authentication);
 
 module.exports = PostAdRouter;

@@ -30,7 +30,6 @@ app.listen(port, host, () => {
         .then(res => {
             console.log("db connected");
             console.log(`Server http://${host}:${port} is ready...`);
-
         })
         .catch(err => {
             console.log(err.message);

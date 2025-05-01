@@ -1,4 +1,4 @@
-const { urlencoded } = require('express');
+// const { urlencoded } = require('express');
 const PostAd = require('../models/postAd');
 
 class postAdController {
@@ -31,7 +31,6 @@ class postAdController {
     async Create(req, res) {
         try {
             console.log("Request Body:", req.body);
-            // const User = req.User._id;
             const { Name, Image, Description, Features, Price, StartOn, EndOn, Category, CityArea, Type,OwnerName,OwnerContact } = req.body;
             // Validate required fields
             if (!Name || !Image || !Description || !Features || !Price || !Category || !CityArea || !Type || !OwnerName || !OwnerContact ) {

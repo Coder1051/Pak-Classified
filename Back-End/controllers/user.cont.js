@@ -42,25 +42,25 @@ class userController {
     //             SecurityAnswer,
     //             securityQuestion
     //         } = req.body;
-    
+
     //         const imagePath = req.file ? req.file.path : null;
-    
-    //         // 🧠 Check required fields
+
+    //         //  Check required fields
     //         if (!name || !email || !password || !contact || !dateOfbirth || !SecurityAnswer || !securityQuestion || !imagePath) {
     //             return res.status(400).json({ message: `Provide Complete Data Please`, status: 400 });
     //         }
-    
-    //         // 🔐 Hash password
+
+    //         //  Hash password
     //         const passwordHash = await bcrypt.hash(password, 10);
-    
-    //         // 🎭 Assign default role if not provided
+
+    //         // Assign default role if not provided
     //         let assignedRole = req.body.role;
     //         if (!assignedRole) {
     //             const guest = await roles.findOne({ Name: "Guest" });
     //             assignedRole = guest ? guest._id : null;
     //         }
-    
-    //         // 🎯 Build user object
+
+    //         //  Build user object
     //         const newUser = {
     //             name,
     //             email,
@@ -72,14 +72,11 @@ class userController {
     //             securityQuestion,
     //             role: assignedRole
     //         };
-    
-    //         // 🧾 Save user
+    //         //  Save user
     //         const created = await User.create(newUser);
     //         if (!created) return res.status(400).json({ message: `User not created`, status: 400 });
-    
     //         res.header("Location", `${req.originalUrl}/${created._id}`);
     //         return res.status(201).json(created);
-    
     //     } catch (error) {
     //         console.error(error);
     //         return res.status(500).json({ message: `Server Error`, status: 500 });
@@ -96,29 +93,29 @@ class userController {
                 dateOfbirth,
                 SecurityAnswer,
                 securityQuestion,
-                image // 👈 now using image from body
+                image //  now using image from body
             } = req.body;
-    
-            // 🧠 Check required fields
+
+            //  Check required fields
             if (!name || !email || !password || !contact || !dateOfbirth || !SecurityAnswer || !securityQuestion || !image) {
                 return res.status(400).json({ message: `Provide Complete Data Please`, status: 400 });
             }
-    
-            // 🔐 Hash password
+
+            //  Hash password
             const passwordHash = await bcrypt.hash(password, 10);
-    
-            // 🎭 Assign default role if not provided
+
+            //  Assign default role if not provided
             let assignedRole = req.body.role;
             if (!assignedRole) {
                 const guest = await roles.findOne({ Name: "Guest" });
                 assignedRole = guest ? guest._id : null;
             }
-    
-            // 🎯 Build user object
+
+            //  Build user object
             const newUser = {
                 name,
                 email,
-                image, // 👈 directly using image URL
+                image, //  directly using image URL
                 password: passwordHash,
                 contact: Number(contact),
                 dateOfbirth,
@@ -126,20 +123,20 @@ class userController {
                 securityQuestion,
                 role: assignedRole
             };
-    
-            // 🧾 Save user
+
+            //  Save user
             const created = await User.create(newUser);
             if (!created) return res.status(400).json({ message: `User not created`, status: 400 });
-    
+
             res.header("Location", `${req.originalUrl}/${created._id}`);
             return res.status(201).json(created);
-    
+
         } catch (error) {
             console.error(error);
             return res.status(500).json({ message: `Server Error`, status: 500 });
         }
     }
-    
+
 
     async Update(req, res) {
         try {
