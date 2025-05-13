@@ -6,6 +6,7 @@ import Form from 'react-bootstrap/Form';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify'; // ✅ Toast import
 import 'react-toastify/dist/ReactToastify.css';
+import Cookies from 'js-cookie'; // ✅ import cookie library
 
 export default function Login(props) {
     const [email, setEmail] = useState('');
@@ -19,16 +20,18 @@ export default function Login(props) {
                 email,
                 password
             });
+            // ✅ Save user to Cookies
+            // Cookies.set("user", JSON.stringify(response.data.user), { expires: 1 }); // 1 days
+            // Cookies.set("token", response.data.token, { expires: 1 });
 
+            // Save user and token to Cookies with 100 seconds expiry
 
-            // ✅ Save user to localStorage
-            localStorage.setItem("user", JSON.stringify(response.data.user)); // optional
-            localStorage.setItem("token", response.data.token); // ✅ Proper token storage
-
+            Cookies.set("user", JSON.stringify(response.data.user), { expires: 1 });
+            Cookies.set("token", response.data.token, { expires: 1 });
 
             // ✅ Call the success handler passed from Header
             props.onLoginSuccess(response.data);
-
+            window.location.reload();
         } catch (err) {
             console.log(err);
             setError("Invalid email or password");

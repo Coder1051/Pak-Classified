@@ -4,29 +4,37 @@ import { Dropdown, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Login from './mainComponents/login';
 import SignUpModal from './mainComponents/signUp';
-import { Link } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify'; // ✅ Toast import
-import 'react-toastify/dist/ReactToastify.css';          // ✅ Toast CSS
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Cookies from 'js-cookie';
 
 export default function Header() {
     const [modalShow, setModalShow] = useState(false);
     const [user, setUser] = useState(null);
     const [show, setShow] = useState(false);
-    const Navigate = useNavigate();
+    const navigate = useNavigate();
 
     useEffect(() => {
-        const storedUser = JSON.parse(localStorage.getItem("user"));
-        if (storedUser) {
+        const storedUser = JSON.parse(Cookies.get("user") || "{}");
+        if (storedUser && storedUser.name) {
             setUser(storedUser);
         }
     }, []);
 
-    const LoginSuccess = (loggedInUser) => {
-        localStorage.setItem("user", JSON.stringify(loggedInUser));
-        setUser(loggedInUser);
+    const LoginSuccess = () => {
+        const storedUser = JSON.parse(Cookies.get("user") || "{}");
+        setUser(storedUser);
         setModalShow(false);
-        toast.success("Login successful!"); // ✅ Toast on login
+        toast.success("Login successful!");
+    };
+
+    const handleLogout = () => {
+        toast.success("Logged out successfully!");
+        Cookies.remove("user");
+        Cookies.remove("token");
+        setUser(null);
+        navigate('/');
     };
 
     return (
@@ -36,7 +44,7 @@ export default function Header() {
                     <div className='heading-1'>
                         <div className="d-flex bg-success p-3 justify-content-between align-items-center">
                             <h4 className='text-white' style={{ marginLeft: '80px' }}>
-                                Welcome,{user.name || "User"}
+                                Welcome, {user.name || "User"}
                             </h4>
                             <Dropdown>
                                 <Dropdown.Toggle as="div" bsPrefix="custom-dropdown-toggle">
@@ -67,16 +75,11 @@ export default function Header() {
                                     <Button
                                         variant="none"
                                         className="w-100"
-                                        onClick={() => {
-                                            toast.success("Logged out successfully!"); // 🔥 Show toast pehle
-                                            localStorage.removeItem("user");
-                                            Navigate('/')
-                                        }}
+                                        onClick={handleLogout}
                                     >
-                                        <FontAwesomeIcon icon="fa-solid fa-arrow-right-from-bracket" />  &nbsp;
+                                        <FontAwesomeIcon icon="fa-solid fa-arrow-right-from-bracket" /> &nbsp;
                                         Logout
                                     </Button>
-
                                 </Dropdown.Menu>
                             </Dropdown>
                         </div>
@@ -97,17 +100,10 @@ export default function Header() {
                     </div>
                 )
             }
-            <ToastContainer/>
+            <ToastContainer />
         </>
     );
 }
-
-
-
-
-
-
-
 
 
 // import React, { useEffect, useState } from 'react';

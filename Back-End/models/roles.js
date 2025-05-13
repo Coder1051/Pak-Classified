@@ -1,11 +1,11 @@
-const { Schema, SchemaTypes, model } = require('mongoose');
+const { Schema, model } = require('mongoose');
 const roleSchema = new Schema({
-    Rank: {
-        type: SchemaTypes.Number
-    },
     name: {
-        type : SchemaTypes.String   
+        type: String,
+        maxLenght: 15,
+        minLenght: 3
     }
-})
-const roles =new model("roles",roleSchema)
+});
+
+const roles = new model("roles", roleSchema)
 module.exports = roles

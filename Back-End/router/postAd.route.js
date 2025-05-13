@@ -1,41 +1,17 @@
-// Without Authentication
-
-// const { Router } = require("express")
-// const PostAdController = require("../controllers/postAd.cont")
-// const { Authentication, isAdmin } = require('../middleware/userMiddleWare')
-// const PostAdRouter = Router();
-
-// PostAdRouter.use(Authentication)
-// PostAdRouter.route("/")
-//     .get(PostAdController.getAll)
-//     .post(PostAdController.Create)
-// PostAdRouter.route("/:id")
-//     .get(PostAdController.getById)
-//     .put(PostAdController.Update)
-//     .delete(PostAdController.Delete)
-// module.exports = PostAdRouter
-
-// with Authentication
-
 const { Router } = require("express");
 const PostAdController = require("../controllers/postAd.cont");
 const { Authentication, isAdmin } = require('../middleware/userMiddleWare');
-
 const PostAdRouter = Router();
 
-// 👇 PUBLIC ROUTE — anyone can view all posts 
-PostAdRouter.route("/")
-    .get(PostAdController.getAll);
-PostAdRouter.route("/")
-    .post(PostAdController.Create);
+// Public route
+PostAdRouter.get("/", PostAdController.getAll);
 
+// Routes that require authentication
+PostAdRouter.post("/", Authentication, PostAdController.Create);
+PostAdRouter.get("/:id", Authentication, PostAdController.getById);
+PostAdRouter.put("/:id", Authentication, PostAdController.Update);
 
-
-PostAdRouter.route("/:id")
-    .get(PostAdController.getById)
-    .put(PostAdController.Update)
-    .delete(PostAdController.Delete);
-// 👇 PROTECTED ROUTES — only logged-in users
-PostAdRouter.use(Authentication);
+// Route that requires admin
+PostAdRouter.delete("/:id", Authentication, isAdmin, PostAdController.Delete);
 
 module.exports = PostAdRouter;

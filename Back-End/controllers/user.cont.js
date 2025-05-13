@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const roles = require('../models/roles');
 const upload = require('../middleware/multer')
-
+const generateToken = require('../data/generateToken');
 class userController {
     constructor() {
 
@@ -64,7 +64,7 @@ class userController {
     //         const newUser = {
     //             name,
     //             email,
-    //             image: imagePath,
+    //             image: imagePath, //for url image
     //             password: passwordHash,
     //             contact: Number(contact),
     //             dateOfbirth,
@@ -82,40 +82,42 @@ class userController {
     //         return res.status(500).json({ message: `Server Error`, status: 500 });
     //     }
     // }
-    // for URL IMg
+
+    // for URL IMG
     async Create(req, res) {
         try {
-            const {
-                name,
-                email,
-                password,
-                contact,
-                dateOfbirth,
-                SecurityAnswer,
-                securityQuestion,
-                image //  now using image from body
-            } = req.body;
+            const { name, email, password, contact, dateOfbirth, SecurityAnswer, securityQuestion, image } = req.body;
 
-            //  Check required fields
             if (!name || !email || !password || !contact || !dateOfbirth || !SecurityAnswer || !securityQuestion || !image) {
                 return res.status(400).json({ message: `Provide Complete Data Please`, status: 400 });
             }
-
-            //  Hash password
             const passwordHash = await bcrypt.hash(password, 10);
+            let assignedRole;
 
-            //  Assign default role if not provided
-            let assignedRole = req.body.role;
-            if (!assignedRole) {
-                const guest = await roles.findOne({ Name: "Guest" });
-                assignedRole = guest ? guest._id : null;
+            if (req.body.role) {
+                if (req.body.role.toLowerCase() === "admin") {
+                    return res.status(403).json({ message: "You are not authorized to assign 'admin' role", status: 403 });
+                }
+
+                const requestedRole = await roles.findOne({ name: req.body.role.toLowerCase() });
+                if (!requestedRole) {
+                    return res.status(400).json({ message: `Role '${req.body.role}' not found`, status: 400 });
+                }
+                assignedRole = requestedRole._id;
+
+            } else {
+                const defaultUserRole = await roles.findOne({ name: "user" });
+                const defaultGuestRole = await roles.findOne({ name: "guest" });
+                if (defaultUserRole) {
+                    assignedRole = defaultUserRole._id;
+                } else if (defaultGuestRole) {
+                    assignedRole = defaultGuestRole._id;
+                } else {
+                    return res.status(500).json({ message: `No default role (user/guest) found`, status: 500 });
+                }
             }
-
-            //  Build user object
             const newUser = {
-                name,
-                email,
-                image, //  directly using image URL
+                name, email, image,
                 password: passwordHash,
                 contact: Number(contact),
                 dateOfbirth,
@@ -123,11 +125,7 @@ class userController {
                 securityQuestion,
                 role: assignedRole
             };
-
-            //  Save user
             const created = await User.create(newUser);
-            if (!created) return res.status(400).json({ message: `User not created`, status: 400 });
-
             res.header("Location", `${req.originalUrl}/${created._id}`);
             return res.status(201).json(created);
 
@@ -136,6 +134,7 @@ class userController {
             return res.status(500).json({ message: `Server Error`, status: 500 });
         }
     }
+
 
 
     async Update(req, res) {
@@ -161,39 +160,58 @@ class userController {
         }
     }
 
+    // async Login(req, res) {
+    //     try {
+
+    //         const currentUser = await User.findOne({ email: req.body.email })
+    //         console.log(currentUser)
+    //         if (currentUser) {
+    //             console.log(req.body.password);
+    //             console.log(currentUser.password);
+    //             if (await bcrypt.compare(req.body.password, currentUser.password)) {
+    //                 const key = process.env.JWT_SECRET_KEY;
+    //                 const payload = {
+    //                     _id: currentUser._id,
+    //                     email: currentUser.email,
+    //                     name: currentUser.name
+    //                 }
+    //                 const Time = Number(process.env.JWT_TOKEN_EXPIRES_IN); //ye Time ki limitation ko hatany k liye comment kiya ha
+    //                 // const Time = Number(process.env.EXPIRES_IN); //ye ghalt ha
+    //                 const token = await jwt.sign(
+    //                     payload,   //data as a preload
+    //                     key,     //secret key of encrytion
+    //                     // { expiresIn: Time }  // Expiry Time Of Token
+    //                 )
+    //                 res.header(process.env.JWT_TOKEN_HEADER,  //Auth Header Name
+    //                     token //Header value
+    //                 );
+    //                 return res.status(200).json(currentUser)
+    //             }
+    //         }
+    //         return res.status(400).json({ message: `Current User Not Found!`, Status: 400 })
+    //     } catch (err) {
+    //         console.error(err);
+
+    //         return res.status(500).json({ message: `Server Error`, status: 500 })
+    //     }
+    // }
     async Login(req, res) {
         try {
-
-            const currentUser = await User.findOne({ email: req.body.email })
-            console.log(currentUser)
-            if (currentUser) {
-                console.log(req.body.password);
-                console.log(currentUser.password);
-                if (await bcrypt.compare(req.body.password, currentUser.password)) {
-                    const key = process.env.JWT_SECRET_KEY;
-                    const payload = {
-                        _id: currentUser._id,
-                        email: currentUser.email,
-                        name: currentUser.name
-                    }
-                    const Time = Number(process.env.JWT_TOKEN_EXPIRES_IN); //ye Time ki limitation ko hatany k liye comment kiya ha
-                    // const Time = Number(process.env.EXPIRES_IN); //ye ghalt ha
-                    const token = await jwt.sign(
-                        payload,   //data as a preload
-                        key,     //secret key of encrytion
-                        // { expiresIn: Time }  // Expiry Time Of Token
-                    )
-                    res.header(process.env.JWT_TOKEN_HEADER,  //Auth Header Name
-                        token //Header value
-                    );
-                    return res.status(200).json(currentUser)
-                }
+            const currentUser = await User.findOne({ email: req.body.email }).populate('role');
+            if (currentUser && await bcrypt.compare(req.body.password, currentUser.password)) {
+                const token = generateToken(currentUser);
+                // Send token via cookie (optional) or header
+                res.cookie('token', token, {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === 'production',
+                    maxAge: 24 * 60 * 60 * 1000
+                });
+                return res.status(200).json({ user: currentUser, token }); // Optionally return token
             }
-            return res.status(400).json({ message: `Current User Not Found!`, Status: 400 })
+            return res.status(400).json({ message: 'Invalid credentials' });
         } catch (err) {
             console.error(err);
-
-            return res.status(500).json({ message: `Server Error`, status: 500 })
+            return res.status(500).json({ message: 'Server Error' });
         }
     }
 }

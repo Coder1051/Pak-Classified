@@ -6,21 +6,22 @@ import PostAdModal from './mainComponents/PostAdModal';
 import "./css/navbar.css";
 import { useState, useEffect } from "react";
 import { Modal, Button } from 'react-bootstrap';
+import Cookies from 'js-cookie';
 
-function Navigation() { 
+function Navigation() {
     const [user, setUser] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [showWarning, setShowWarning] = useState(false);
     const [postCreated, setPostCreated] = useState(false);
 
     useEffect(() => {
-        const storedUser = localStorage.getItem("user");
+        const storedUser = Cookies.get("user");
         if (storedUser) {
             try {
                 const parsedUser = JSON.parse(storedUser);
                 setUser(parsedUser);
             } catch (error) {
-                console.error("Error parsing user from localStorage", error);
+                console.error("Error parsing user from cookies", error);
             }
         }
     }, []);
@@ -47,7 +48,7 @@ function Navigation() {
         };
 
         try {
-            const token = localStorage.getItem("token");
+            const token = Cookies.get("token");
             const res = await fetch(`http://localhost:4300/api/v1/postAd`, {
                 method: "POST",
                 headers: {
@@ -62,7 +63,6 @@ function Navigation() {
             console.log("Post Created successfully:", result);
             setPostCreated(true);
             setShowModal(false);
-            // refreshPosts();  // ✅ Trigger re-fetch in Dashboard
         } catch (error) {
             console.error("Error creating post:", error);
         }
@@ -75,8 +75,8 @@ function Navigation() {
     }, [postCreated]);
 
     const handlePostClick = () => {
-        const storedUser = localStorage.getItem("user");
-        if (storedUser) {
+        const token = Cookies.get("token");
+        if (token) {
             setShowModal(true);
         } else {
             setShowWarning(true);
@@ -111,7 +111,7 @@ function Navigation() {
                     <Modal.Title>Access Denied</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <p>Only Admin can perform this function.</p>
+                    <p>You must be logged in to post an advertisement. Please log in first.</p>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => setShowWarning(false)}>
@@ -124,6 +124,7 @@ function Navigation() {
 }
 
 export default Navigation;
+
 
 
 

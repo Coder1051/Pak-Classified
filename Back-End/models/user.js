@@ -2,23 +2,27 @@ const { Schema, SchemaTypes, model } = require('mongoose')
 const userSchema = new Schema({
     name: {
         type: SchemaTypes.String,
-        required : true
+        required: true
     },
     email: {
         type: SchemaTypes.String,
-        required : true
+        required: true,
+        unique: true,
+        lowercase: true,
+        trim: true,      
+        match: [/^\S+@\S+\.\S+$/, 'Please use a valid email address'] // Regex for email format
     },
     image: {
         type: SchemaTypes.String,
-        required : true
+        required: true
     },
     password: {
         type: SchemaTypes.String,
-        required : true
+        required: true
     },
     contact: {
         type: SchemaTypes.Number,
-        required : true
+        required: true
     },
     role: {
         type: SchemaTypes.ObjectId,
@@ -26,7 +30,7 @@ const userSchema = new Schema({
     },
     dateOfbirth: {
         type: SchemaTypes.String,
-        required : true
+        required: true
     },
     SecurityAnswer: {
         type: SchemaTypes.String

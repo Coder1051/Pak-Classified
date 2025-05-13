@@ -1,4 +1,3 @@
-// const { urlencoded } = require('express');
 const PostAd = require('../models/postAd');
 
 class postAdController {
@@ -72,6 +71,5 @@ class postAdController {
         }
     }
 }
-
 const PostAdController = new postAdController();
 module.exports = PostAdController
