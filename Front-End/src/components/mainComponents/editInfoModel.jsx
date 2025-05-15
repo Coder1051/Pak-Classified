@@ -17,7 +17,7 @@ export default function EditProfileModal({ show, onHide, user, onSave }) {
 
     const handleSubmit = async () => {
         try {
-            const token = "token"; // replace this with actual token if needed
+            const token = "token"; 
 
             const res = await fetch(`http://localhost:4300/api/v1/user/${user._id}`, {
                 method: 'PUT',

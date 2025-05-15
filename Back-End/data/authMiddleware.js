@@ -1,32 +1,3 @@
-// const jwt = require('jsonwebtoken')
-// const User = require('../models/user.models.js')
-// const protect = async (req, res, next) => {
-//   let token;
-//   token = req.cookies.jwt;
-//   if (token) {
-//     try {
-//       const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-//       req.user = await User.findById(decoded.userId).select('-password');
-//       next();
-//     } catch (err) {
-//       res.status(401);
-//       throw new Error('Unauthorized, invalid token');
-//     }
-//   } else {
-//     res.status(404);
-//     throw new Error('Unauthorized');
-//   }
-// };
-// const isAdmin = async (req, res, next) => {
-//   const currentUser = req.user;
-//   if (currentUser.role === 'admin') {
-//     return next();
-//   }
-//   res.status(401);
-//   throw new Error('You are not authorized, login with admin role');
-// };
-// module.exports = { protect, isAdmin };
-
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 

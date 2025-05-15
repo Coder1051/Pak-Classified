@@ -26,7 +26,7 @@ const Home = () => {
 
     const fetchPosts = async () => {
         try {
-            const token = "token"; // Replace with real token
+            const token = "token"; 
             const res = await fetch("http://localhost:4300/api/v1/postAd", {
                 method: "GET",
                 headers: {

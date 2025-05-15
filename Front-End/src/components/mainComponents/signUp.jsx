@@ -46,13 +46,20 @@ function SignUpModal({ show, handleClose }) {
 
             if (response.status === 201) {
                 toast.success("User registered successfully!");
-                handleClose(); // ✅ This will close modal
+                handleClose(); 
             } else {
                 toast.error("Registration failed.");
             }
-        } catch (error) {
-            console.error(error);
-            toast.error("Server Error or Validation failed.");
+        }
+        catch (error) {
+            console.error("Signup Error:", error);
+            if (error.response) {
+                console.error("Response Data:", error.response.data);
+                console.error("Status Code:", error.response.status);
+                toast.error(error.response.data?.message || "Validation or Server Error");
+            } else {
+                toast.error("Server not responding.");
+            }
         }
     };
 
@@ -109,62 +116,3 @@ function SignUpModal({ show, handleClose }) {
 }
 
 export default SignUpModal;
-
-// Before
-// import React, { useState } from 'react';
-// import { Modal, Button, Form } from 'react-bootstrap';
-
-// function SignUpModal({ show, handleClose }) {
-
-//     const [formData, setFormData] = useState({
-//         name: '',
-//         email: '',
-//         apiKey: '',
-//         loginId: '',
-//         password: '',
-//         securityQuestion: '',
-//         securityAnswer: '',
-//         birthDate: '',
-//         contactNumber: '',
-//         image: null
-//     });
-
-
-
-//     const handleChange = (e) => {
-//         const { name, value, files } = e.target;
-//         setFormData(prev => ({
-//             ...prev,
-//             [name]: files ? files[0] : value
-//         }));
-//     };
-
-//     const handleSubmit = (e) => {
-//         e.preventDefault();
-//         console.log('Form Data:', formData);
-//         // Add your form submission logic here
-//     };
-
-//     return (
-//         <Modal show={show} onHide={handleClose} centered>
-//             <Modal.Header closeButton>
-//                 <Modal.Title>Sign Up</Modal.Title>
-//             </Modal.Header>
-//             <Modal.Body>
-//                 <Form onSubmit={handleSubmit}>
-//                     <Form.Group className="mb-2">
-
-//                         <Form.Label> Name </Form.Label>
-//                         <Form.Control name="name" type="text" placeholder="Enter name" onChange={handleChange} />
-//                     </Form.Group>
-
-//
-
-//                     <Button variant="primary" type="submit" className="btn-md">Sign Up</Button>
-//                 </Form>
-//             </Modal.Body>
-//         </Modal>
-//     );
-// }
-
-// export default SignUpModal;

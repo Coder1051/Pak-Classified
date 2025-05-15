@@ -1,61 +1,42 @@
-require("dotenv").config();
-const path = require("path");
-const { connectDB } = require('./data/utils');
-const Message = require('./models/message')
 const express = require("express");
 const cors = require("cors");
-const upload = require('./middleware/multer')
-const nodemailer = require('nodemailer');
-const bodyParser = require('body-parser');
+const path = require("path");
+require("dotenv").config();
+const { connectDB } = require('./data/utils');
+const Message = require('./models/message');
+// const upload = require('./middleware/multer');
 
-const PostAdRouter = require("./router/postAd.route")
-const userRouter = require("./router/user.route")
+const PostAdRouter = require("./router/postAd.route");
+const userRouter = require("./router/user.route");
+const RolesRouter =require('./router/roles.route')
 
 const app = express();
-app.use(cors());
-// app.use('/uploads', express.static('uploads')); to upload image for user
 
-app.use(bodyParser.json());
-const publicFolder = path.resolve(__dirname, "public")
+// CORS setup
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true
+}));
 
-const port = process.env.PORT
-const host = process.env.HOST
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER, //email here
-        pass: process.env.EMAIL_PASS, // created app password
-    },
-});
-app.post('/contact', async (req, res) => {
-    const { name, email, message } = req.body;
-    if (!name || !email || !message) {
-        return res.status(400).send({ message: 'All fields are required.' });
-    }
-
-    try {
-        await transporter.sendMail({
-            from: email,
-            to: process.env.EMAIL_USER,
-            subject: `Message from ${name}`,
-            text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
-        });
-        res.status(200).send({ message: 'Email sent successfully!' });
-    } catch (error) {
-        res.status(500).send({ message: 'Failed to send email.', error });
-    }
-});
-
-app.use(express.static(publicFolder))
-app.use(express.urlencoded({ extended: true }))
+// body parsing
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
+const publicFolder = path.resolve(__dirname, "public");
+app.use(express.static(publicFolder));
+
+const port = process.env.PORT;
+const host = process.env.HOST;
+
+// Routes
 app.use("/api/v1/postAd", PostAdRouter);
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/roles", RolesRouter);
 
+//server start
 app.listen(port, host, () => {
     connectDB()
-        .then(res => {
+        .then(() => {
             console.log("db connected");
             console.log(`Server http://${host}:${port} is ready...`);
         })

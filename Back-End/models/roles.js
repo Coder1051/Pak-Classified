@@ -1,11 +1,15 @@
-const { Schema, model } = require('mongoose');
-const roleSchema = new Schema({
-    name: {
-        type: String,
-        maxLenght: 15,
-        minLenght: 3
-    }
-});
+const {mongoose, SchemaTypes } = require("mongoose")
 
-const roles = new model("roles", roleSchema)
-module.exports = roles
+const roleSchema = new mongoose.Schema({
+    Name:{
+        type: SchemaTypes.String,
+        require:true
+    },
+    Rank: {
+        type: SchemaTypes.String,
+        require: true,
+        default:"User"
+    }    
+})
+const roles = mongoose.model("roles",roleSchema)
+module.exports = roles;

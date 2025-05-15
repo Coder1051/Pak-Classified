@@ -86,56 +86,34 @@ class userController {
     // for URL IMG
     async Create(req, res) {
         try {
-            const { name, email, password, contact, dateOfbirth, SecurityAnswer, securityQuestion, image } = req.body;
-
-            if (!name || !email || !password || !contact || !dateOfbirth || !SecurityAnswer || !securityQuestion || !image) {
-                return res.status(400).json({ message: `Provide Complete Data Please`, status: 400 });
+            const data = req.body;
+            // Required fields check
+            if (!data.email || !data.password || !data.name || !data.image || !data.contact || !data.dateOfbirth) {
+                return res.status(400).json({ message: "Missing required fields" });
             }
-            const passwordHash = await bcrypt.hash(password, 10);
-            let assignedRole;
-
-            if (req.body.role) {
-                if (req.body.role.toLowerCase() === "admin") {
-                    return res.status(403).json({ message: "You are not authorized to assign 'admin' role", status: 403 });
-                }
-
-                const requestedRole = await roles.findOne({ name: req.body.role.toLowerCase() });
-                if (!requestedRole) {
-                    return res.status(400).json({ message: `Role '${req.body.role}' not found`, status: 400 });
-                }
-                assignedRole = requestedRole._id;
-
-            } else {
-                const defaultUserRole = await roles.findOne({ name: "user" });
-                const defaultGuestRole = await roles.findOne({ name: "guest" });
-                if (defaultUserRole) {
-                    assignedRole = defaultUserRole._id;
-                } else if (defaultGuestRole) {
-                    assignedRole = defaultGuestRole._id;
-                } else {
-                    return res.status(500).json({ message: `No default role (user/guest) found`, status: 500 });
-                }
+            // Check if user already exists
+            const existingUser = await User.findOne({ email: data.email });
+            if (existingUser) {
+                return res.status(409).json({ message: "User with this email already exists" });
             }
-            const newUser = {
-                name, email, image,
-                password: passwordHash,
-                contact: Number(contact),
-                dateOfbirth,
-                SecurityAnswer,
-                securityQuestion,
-                role: assignedRole
-            };
-            const created = await User.create(newUser);
-            res.header("Location", `${req.originalUrl}/${created._id}`);
-            return res.status(201).json(created);
-
+            // Assign default role if none is provided
+            if (!data.role) {
+                const guestRole = await roles.findOne({ name: "guest" }); // lowercase!
+                if (!guestRole) {
+                    return res.status(500).json({ message: "Default role not found" });
+                }
+                data.role = guestRole._id;
+            }
+            // Hash password
+            data.password = await bcrypt.hash(data.password, 10);
+            // Create user
+            const createdUser = await User.create(data);
+            return res.status(201).json(createdUser);
         } catch (error) {
             console.error(error);
-            return res.status(500).json({ message: `Server Error`, status: 500 });
+            return res.status(500).json({ message: "Internal server error" });
         }
-    }
-
-
+    };
 
     async Update(req, res) {
         try {
@@ -203,7 +181,8 @@ class userController {
                 // Send token via cookie (optional) or header
                 res.cookie('token', token, {
                     httpOnly: true,
-                    secure: process.env.NODE_ENV === 'production',
+                    secure: false, // ✅ localhost ke liye false
+                    sameSite: 'Lax', // ✅ optional but helpful
                     maxAge: 24 * 60 * 60 * 1000
                 });
                 return res.status(200).json({ user: currentUser, token }); // Optionally return token

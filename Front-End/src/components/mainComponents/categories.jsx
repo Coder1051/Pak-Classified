@@ -4,17 +4,17 @@ import { useNavigate } from 'react-router-dom';
 
 
 export default function Categories() {
-  const [posts, setPosts] = useState([]); // posts ko state mein store karne ke liye
+  const [posts, setPosts] = useState([]); 
   const navigate = useNavigate();
 
   const fetchPosts = async () => {
     try {
-      const token = "token"; // replace with actual token
+      const token = "token";
       const res = await fetch("http://localhost:4300/api/v1/postAd", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "X-Auth-Token": token, // Ye important hai
+          "X-Auth-Token": token, 
         },
       });
 
@@ -27,8 +27,8 @@ export default function Categories() {
   };
 
   useEffect(() => {
-    fetchPosts(); // Component mount hote hi fetchPosts() call ho jayega
-  }, []); // Empty dependency array ensures it runs only once when component mounts
+    fetchPosts(); 
+  }, []); 
 
   return (
     <>
@@ -55,25 +55,24 @@ export default function Categories() {
               <Col className='ps-4 justify-content-center' key={index} md={6}>
                 <Card
                   className='my-3'style={{padding :'0px'}}>
-                  {/* Use the post.Image here */}
                   <Card.Img
                     variant="top"
                     src={post.Image ? post.Image : "https://i.pinimg.com/474x/89/fd/f3/89fdf37561d764940d38b2fcd489876f.jpg"}
                     className="w-100"
                     style={{
-                      height: '400px',           // Fixed height for consistency
-                      objectFit: 'cover',        // Crops the image without distortion
+                      height: '400px',          
+                      objectFit: 'cover',        
                       borderTopLeftRadius: '0.5rem',
                       borderTopRightRadius: '0.5rem'
                     }}
                   />
 
                   <Card.Body>
-                    <Card.Title>{post.Name}</Card.Title> {/* Replace with actual post data */}
-                    <Card.Text>{post.Description}</Card.Text> {/* Replace with actual post data */}
+                    <Card.Title>{post.Name}</Card.Title> 
+                    <Card.Text>{post.Description}</Card.Text> 
 
                     <Button onClick={() => {
-                      localStorage.setItem("carPost", JSON.stringify(post)); // For reload persistence
+                      localStorage.setItem("carPost", JSON.stringify(post));
                       navigate('/carDetails', { state: post }); // Pass the data to MoreDetails
                     }} variant="success">
                       More Details

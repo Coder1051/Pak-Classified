@@ -19,8 +19,10 @@ export default function Login(props) {
             const response = await axios.post("http://localhost:4300/api/v1/user/login", {
                 email,
                 password
+            }, {
+                withCredentials: true  
             });
-            // ✅ Save user to Cookies
+            // Save user to Cookies
             // Cookies.set("user", JSON.stringify(response.data.user), { expires: 1 }); // 1 days
             // Cookies.set("token", response.data.token, { expires: 1 });
 
@@ -29,7 +31,7 @@ export default function Login(props) {
             Cookies.set("user", JSON.stringify(response.data.user), { expires: 1 });
             Cookies.set("token", response.data.token, { expires: 1 });
 
-            // ✅ Call the success handler passed from Header
+            // Call the success handler passed from Header
             props.onLoginSuccess(response.data);
             window.location.reload();
         } catch (err) {
@@ -37,7 +39,6 @@ export default function Login(props) {
             setError("Invalid email or password");
             setTimeout(() => {
                 toast.error("Invalid email or password");
-                // ✅ Toast on login
             }, 1000);
         }
     };
@@ -53,7 +54,6 @@ export default function Login(props) {
                         <Form.Control
                             type="email"
                             placeholder="name@example.com"
-                            // value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
                     </FloatingLabel>

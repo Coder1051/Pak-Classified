@@ -25,7 +25,7 @@ const App = () => {
           <Route path='adcategory' element={<AdCategory />} />
           <Route path='privacy' element={<Privacy />} />
           <Route path='carDetails' element={<MoreDetails/>} />
-          <Route path='dashboard' element={<Dashboard/>} />
+          <Route path='/admin/dashboard' element={<Dashboard/>} />
           <Route path='term&conditions' element={<TermCondition />} />
           <Route path='*' element={<Error />} />
           <Route path='/admin' element={<Admin/>} />

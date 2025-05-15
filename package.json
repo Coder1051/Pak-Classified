@@ -1,0 +1,28 @@
+{
+  "name": "full-project",
+  "version": "1.0.0",
+  "description": "\"# Pak-Classified Project ,Final assignment Project at Evs Institute at lahore\"",
+  "main": "app.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "npm run dev-backend --prefix Back-End",
+    "client": "npm run dev-frontend --prefix Front-End",
+    "dev-backend": "nodemon app.js",
+    "dev-frontend": "npm run dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Coder1051/Pak-Classified.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Coder1051/Pak-Classified/issues"
+  },
+  "homepage": "https://github.com/Coder1051/Pak-Classified#readme",
+  "dependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
